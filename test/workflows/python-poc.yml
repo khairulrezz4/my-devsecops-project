@@ -1,0 +1,29 @@
+name: Python POC DevSecOps Test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'POC/python/**'
+      - 'test/workflows/python-poc.yml'
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: python-poc-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  devsecops:
+    name: Run Python POC pipeline
+    uses: khairulrezz4/my-devsecops-project/.github/workflows/DEVSECOPS_WORKFLOW_MAIN.yml@027ce6ac42009d5eb83bcf7540eea7d00ae8d1c7 # develop
+    with:
+      build-command: 'python POC/python/build.py'
+      test-command: 'python -m unittest discover -s POC/python -p "test_*.py"'
+      artifact-path: 'POC/python/dist'
+      artifact-name: python-poc
+      deploy-enabled: false
+      deploy-environment: ''
+      deploy-command: ''

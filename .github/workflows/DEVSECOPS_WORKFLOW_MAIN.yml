@@ -1,0 +1,126 @@
+name: DEVSECOPS_WORKFLOW_MAIN
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - 'release/**'
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+    inputs:
+      deploy-enabled:
+        description: Enable deployment through the protected environment
+        required: true
+        type: boolean
+        default: false
+      deploy-environment:
+        description: Protected GitHub environment name
+        required: true
+        type: string
+      deploy-command:
+        description: Deployment command to run after CI passes
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      build-command:
+        description: Project build command
+        required: false
+        type: string
+        default: ''
+      test-command:
+        description: Project test command
+        required: false
+        type: string
+        default: ''
+      artifact-path:
+        description: Optional build output path
+        required: false
+        type: string
+        default: ''
+      artifact-name:
+        description: Name of the build artifact
+        required: false
+        type: string
+        default: build-artifact
+      deploy-enabled:
+        description: Enable deployment
+        required: false
+        type: boolean
+        default: false
+      deploy-environment:
+        description: Protected GitHub environment name
+        required: false
+        type: string
+        default: ''
+      deploy-command:
+        description: Deployment command
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: devsecops-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  branch-policy:
+    name: Enforce branch push policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Reject direct pushes to protected branches
+        if: github.event_name == 'push'
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        shell: bash
+        run: |
+          case "$GITHUB_REF" in
+            refs/heads/main|refs/heads/develop|refs/heads/release|refs/heads/release/*)
+              echo "::error::Direct pushes to protected branches are not allowed. Open a pull request."
+              exit 1
+              ;;
+            *)
+              echo "Push policy passed for $GITHUB_REF."
+              ;;
+          esac
+
+  ci:
+    name: Continuous integration
+    needs: branch-policy
+    uses: ./.github/workflows/reusable-ci.yml
+    with:
+      build-command: ${{ inputs.build-command || '' }}
+      test-command: ${{ inputs.test-command || '' }}
+      artifact-path: ${{ inputs.artifact-path || '' }}
+      artifact-name: ${{ inputs.artifact-name || 'build-artifact' }}
+
+  security:
+    name: Security checks
+    needs: branch-policy
+    uses: ./.github/workflows/reusable-security.yml
+    with:
+      codeql-languages: javascript-typescript,python
+
+  cd:
+    name: Continuous delivery
+    needs:
+      - ci
+      - security
+    if: >-
+      (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call') &&
+      inputs.deploy-enabled == true &&
+      inputs.deploy-environment != '' &&
+      inputs.deploy-command != ''
+    uses: ./.github/workflows/reusable-cd.yml
+    with:
+      artifact-name: ${{ inputs.artifact-name || 'build-artifact' }}
+      deploy-command: ${{ inputs.deploy-command }}
+      deploy-environment: ${{ inputs.deploy-environment }}

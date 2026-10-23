@@ -1,0 +1,41 @@
+# Copy this file to an application repository as:
+# .github/workflows/pipeline_dso.yaml
+# Copy the configuration files to:
+# .github/pipeline/build-list.json
+# .github/pipeline/deployment-targets.json
+#
+# Update the immutable ref below only after reviewing a released version of
+# the central DevSecOps workflow.
+name: Application DevSecOps Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - 'release/**'
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: dso-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  devsecops:
+    name: Run central DevSecOps workflow
+    uses: khairulrezz4/my-devsecops-project/.github/workflows/DEVSECOPS_WORKFLOW_MAIN.yml@027ce6ac42009d5eb83bcf7540eea7d00ae8d1c7 # develop
+    with:
+      build-command: ''
+      test-command: ''
+      artifact-path: ''
+      artifact-name: build-artifact
+      deploy-enabled: false
+      deploy-environment: ''
+      deploy-command: ''

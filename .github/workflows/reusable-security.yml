@@ -1,0 +1,50 @@
+name: Reusable security checks
+
+on:
+  workflow_call:
+    inputs:
+      codeql-languages:
+        description: Comma-separated CodeQL languages
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scan repository for secrets
+        uses: gitleaks/gitleaks-action@dcedce43c6f43de0b836d1fe38946645c9c638dc # v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  codeql:
+    name: CodeQL
+    if: inputs.codeql-languages != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@5c8ea125689a2c5ae2672d1d914ac4bcd95d1b4b # v3
+        with:
+          languages: ${{ inputs.codeql-languages }}
+
+      - name: Analyze with CodeQL
+        uses: github/codeql-action/analyze@5c8ea125689a2c5ae2672d1d914ac4bcd95d1b4b # v3

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "buildCommand": "",
+  "testCommand": "",
+  "artifacts": [
+    {
+      "name": "build-artifact",
+      "path": ""
+    }
+  ]
+}

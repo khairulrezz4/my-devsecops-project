@@ -1,0 +1,38 @@
+name: Python test
+description: Install Python dependencies and run a Python test command
+inputs:
+  working-directory:
+    description: Python project directory
+    required: false
+    default: .
+  python-version:
+    description: Python version
+    required: false
+    default: '3.12'
+  requirements-file:
+    description: Requirements file relative to the working directory
+    required: false
+    default: requirements.txt
+  test-command:
+    description: Test command
+    required: false
+    default: pytest -q
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+        cache-dependency-path: ${{ inputs.working-directory }}/${{ inputs.requirements-file }}
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        REQUIREMENTS_FILE: ${{ inputs.requirements-file }}
+      run: python -m pip install --requirement "$REQUIREMENTS_FILE"
+    - name: Run tests
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: ${{ inputs.test-command }}

@@ -1,0 +1,36 @@
+name: Validate pipeline configuration
+description: Validate the shared build and deployment JSON configuration files
+inputs:
+  build-list:
+    description: Path to the build configuration
+    required: false
+    default: .github/pipeline/build-list.json
+  deployment-targets:
+    description: Path to the deployment configuration
+    required: false
+    default: .github/pipeline/deployment-targets.json
+runs:
+  using: composite
+  steps:
+    - name: Validate JSON configuration
+      shell: bash
+      env:
+        BUILD_LIST: ${{ inputs.build-list }}
+        DEPLOYMENT_TARGETS: ${{ inputs.deployment-targets }}
+      run: |
+        python - "$BUILD_LIST" "$DEPLOYMENT_TARGETS" <<'PY'
+        import json
+        import sys
+        from pathlib import Path
+
+        build_path, targets_path = map(Path, sys.argv[1:])
+        build = json.loads(build_path.read_text(encoding="utf-8"))
+        targets = json.loads(targets_path.read_text(encoding="utf-8"))
+
+        if build.get("version") != 1 or not isinstance(build.get("artifacts"), list):
+            raise SystemExit("Invalid build-list.json schema")
+        if targets.get("version") != 1 or not isinstance(targets.get("targets"), list):
+            raise SystemExit("Invalid deployment-targets.json schema")
+        if any(not target.get("environment") for target in targets["targets"]):
+            raise SystemExit("Every deployment target requires an environment")
+        PY
