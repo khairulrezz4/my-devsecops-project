@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deployment
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: ${{ inputs.deploy-environment }}

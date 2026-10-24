@@ -98,7 +98,7 @@ jobs:
           esac
 
   ci:
-    name: Continuous integration
+    name: Build
     needs: branch-policy
     uses: ./.github/workflows/reusable-ci.yml
     with:
@@ -108,7 +108,7 @@ jobs:
       artifact-name: ${{ inputs.artifact-name || 'build-artifact' }}
 
   security:
-    name: Security checks
+    name: Security scanning
     needs: branch-policy
     uses: ./.github/workflows/reusable-security.yml
     with:
@@ -116,7 +116,7 @@ jobs:
       codeql-build-mode: ${{ inputs.codeql-build-mode || 'none' }}
 
   cd:
-    name: Continuous delivery
+    name: Deployment
     needs:
       - ci
       - security
