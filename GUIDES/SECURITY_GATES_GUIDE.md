@@ -5,7 +5,7 @@ The baseline reusable security workflow currently provides:
 | Gate | Tool | Evidence |
 | --- | --- | --- |
 | Secret detection | Gitleaks | Failed job and scanner report |
-| Static analysis | CodeQL | Code scanning alert/SARIF |
+| Static analysis | CodeQL | Code scanning alert/SARIF plus downloadable HTML/PDF report artifact |
 | Workflow and dependency hardening | Planned | Add before production rollout |
 | SBOM and artifact provenance | Planned | Add for release workflows |
 
