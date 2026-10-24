@@ -18,8 +18,9 @@ Reference guides are in `GUIDES/`:
   artifact.
 - `reusable-cd.yml` downloads the artifact and deploys through a protected
   GitHub environment.
-- `pipeline_dso.yaml` is a caller template for application repositories. Copy
-  it into the application repository's `.github/workflows` directory.
+- `.github/templates/pipeline_dso.yaml` is a caller template for application
+  repositories. Copy it into the application repository's `.github/workflows`
+  directory.
 - `.github/pipeline/build-list.json` defines the build/test commands and
   artifact paths.
 - `.github/pipeline/deployment-targets.json` defines environments, branch

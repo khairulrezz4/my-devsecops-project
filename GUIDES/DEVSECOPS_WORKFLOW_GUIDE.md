@@ -8,14 +8,16 @@ in `.github/pipeline/`:
 ```text
 .github/
   actions/                 # Repeated local composite actions
+  templates/
+    pipeline_dso.yaml      # Application caller template
   pipeline/
     build-list.json
     deployment-targets.json
-  workflows/
-    pipeline_dso.yaml      # Application caller template
+  workflows/                # Active workflows only
 ```
 
-Application repositories copy `pipeline_dso.yaml` and the two JSON files.
+Application repositories copy `.github/templates/pipeline_dso.yaml` and the
+two JSON files.
 They call `DEVSECOPS_WORKFLOW_MAIN.yml`, which coordinates branch policy, CI,
 security checks, and optional CD.
 

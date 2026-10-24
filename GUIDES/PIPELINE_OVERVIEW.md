@@ -10,8 +10,7 @@ maintained CI, security, and CD workflows.
 
 ```mermaid
 flowchart TD
-    APP[Application repository] --> CALLER[pipeline_dso.yaml]
-    CALLER --> MAIN[DEVSECOPS_WORKFLOW_MAIN.yml]
+    APP[Application repository] --> MAIN[DEVSECOPS_WORKFLOW_MAIN.yml]
     MAIN --> POLICY[branch-policy]
     POLICY --> CI[reusable-ci.yml]
     POLICY --> SEC[reusable-security.yml]
@@ -35,7 +34,7 @@ flowchart TD
 ```text
 Application repository
   |
-  | .github/workflows/pipeline_dso.yaml
+  | .github/templates/pipeline_dso.yaml (copy to application repository)
   v
 DEVSECOPS_WORKFLOW_MAIN.yml
   |
@@ -96,12 +95,12 @@ job is a fail-closed detection backstop.
 Copy these files into the application repository:
 
 ```text
-.github/workflows/pipeline_dso.yaml
+.github/templates/pipeline_dso.yaml (copy to application repository)
 .github/pipeline/build-list.json
 .github/pipeline/deployment-targets.json
 ```
 
-Update the central workflow reference in `pipeline_dso.yaml` to a reviewed
+Update the central workflow reference in `.github/templates/pipeline_dso.yaml` to a reviewed
 commit SHA. Configure the build inputs for the application stack:
 
 ```yaml
