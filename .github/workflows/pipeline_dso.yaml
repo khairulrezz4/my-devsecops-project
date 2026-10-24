@@ -39,3 +39,4 @@ jobs:
       deploy-enabled: false
       deploy-environment: ''
       deploy-command: ''
+      codeql-build-mode: none
