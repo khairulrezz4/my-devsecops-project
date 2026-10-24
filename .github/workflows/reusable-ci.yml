@@ -39,7 +39,7 @@ jobs:
           persist-credentials: false
 
       - name: Validate pipeline configuration
-        uses: khairulrezz4/my-devsecops-project/.github/actions/validate-pipeline-config@027ce6ac42009d5eb83bcf7540eea7d00ae8d1c7 # develop
+        uses: khairulrezz4/my-devsecops-project/.github/actions/validate-pipeline-config@35d552e0af556aee41597e824bc460e48de57a2f # feature/ci-cd-workflow-template
 
       - name: Run build command
         if: inputs.build-command != ''

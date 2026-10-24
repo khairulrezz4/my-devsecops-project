@@ -107,7 +107,7 @@ jobs:
     needs: branch-policy
     uses: ./.github/workflows/reusable-security.yml
     with:
-      codeql-languages: javascript-typescript,python
+      codeql-languages: python
 
   cd:
     name: Continuous delivery
