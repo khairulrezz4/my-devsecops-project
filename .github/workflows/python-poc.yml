@@ -19,7 +19,7 @@ concurrency:
 jobs:
   devsecops:
     name: Run Python POC pipeline
-    uses: khairulrezz4/my-devsecops-project/.github/workflows/DEVSECOPS_WORKFLOW_MAIN.yml@3c1275f7f299c54c08df2269a7f31e9291ad0f22 # fixed input evaluation
+    uses: khairulrezz4/my-devsecops-project/.github/workflows/DEVSECOPS_WORKFLOW_MAIN.yml@3c1275f45b0fe43da9ae7cc75be15de9c779ae87 # fixed input evaluation
     with:
       build-command: 'python POC/python/build.py'
       test-command: 'python -m unittest discover -s POC/python -p "test_*.py"'
