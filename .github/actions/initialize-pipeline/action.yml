@@ -1,0 +1,18 @@
+name: Initialize pipeline
+description: Validate workflow YAML, tracked JSON, and immutable action references
+runs:
+  using: composite
+  steps:
+    - name: Validate workflow YAML
+      shell: bash
+      run: |
+        mapfile -t workflow_files < <(git ls-files '*.yml' '*.yaml' | grep -E '(^|/)(\.github|test)/' || true)
+        if (( ${#workflow_files[@]} == 0 )); then
+          echo "::error::No workflow YAML files were found."
+          exit 1
+        fi
+        ruby -e 'require "yaml"; ARGV.each { |path| YAML.parse_file(path) }' "${workflow_files[@]}"
+
+    - name: Validate JSON and immutable references
+      shell: bash
+      run: python scripts/validate_pipeline_references.py

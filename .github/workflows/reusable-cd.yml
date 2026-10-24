@@ -1,0 +1,54 @@
+name: Reusable CD
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: Build artifact to download before deployment
+        required: false
+        type: string
+        default: build-artifact
+      deploy-command:
+        description: Project deployment command
+        required: true
+        type: string
+      deploy-environment:
+        description: Protected GitHub environment for deployment
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  deploy:
+    name: Deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: ${{ inputs['deploy-environment'] }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Download build artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ${{ inputs['artifact-name'] }}
+          path: artifact
+
+      - name: Verify downloaded build package
+        shell: bash
+        run: |
+          if [[ ! -d artifact ]] || [[ -z "$(find artifact -type f -print -quit)" ]]; then
+            echo "::error::Downloaded build package is empty."
+            exit 1
+          fi
+
+      - name: Deploy downloaded build package
+        env:
+          ARTIFACT_PATH: ${{ github.workspace }}/artifact
+        shell: bash
+        run: ${{ inputs['deploy-command'] }}
