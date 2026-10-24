@@ -28,3 +28,4 @@ jobs:
       deploy-enabled: false
       deploy-environment: ''
       deploy-command: ''
+      # The build package is produced before deployment and consumed from artifact storage.
