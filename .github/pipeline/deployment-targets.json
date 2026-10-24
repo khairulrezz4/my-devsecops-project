@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "targets": [
+    {
+      "environment": "development",
+      "branchPatterns": [
+        "develop"
+      ],
+      "provider": "",
+      "target": "",
+      "deployCommand": "",
+      "requiresApproval": false
+    },
+    {
+      "environment": "staging",
+      "branchPatterns": [
+        "release/*"
+      ],
+      "provider": "",
+      "target": "",
+      "deployCommand": "",
+      "requiresApproval": true
+    },
+    {
+      "environment": "production",
+      "branchPatterns": [
+        "main"
+      ],
+      "provider": "",
+      "target": "",
+      "deployCommand": "",
+      "requiresApproval": true
+    }
+  ]
+}

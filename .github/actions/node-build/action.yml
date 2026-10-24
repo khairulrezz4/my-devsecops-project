@@ -1,0 +1,36 @@
+name: Node build
+description: Install Node dependencies and build a Node project
+inputs:
+  working-directory:
+    description: Node project directory
+    required: false
+    default: .
+  node-version:
+    description: Node.js version
+    required: false
+    default: '22'
+  install-command:
+    description: Dependency installation command
+    required: false
+    default: npm ci
+  build-command:
+    description: Build command
+    required: false
+    default: npm run build
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: ${{ inputs.install-command }}
+    - name: Build project
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: ${{ inputs.build-command }}
