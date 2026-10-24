@@ -27,6 +27,8 @@ Reference guides are in `GUIDES/`:
   patterns, and deploy targets.
 - `.github/actions/validate-pipeline-config` validates both configuration
   files.
+- `.github/actions/initialize-pipeline` performs fail-fast workflow, JSON, and
+  immutable-reference checks.
 - `.github/actions/node-build` standardizes Node.js installation and builds.
 - `.github/actions/python-test` standardizes Python dependency installation and
   tests.
@@ -34,6 +36,10 @@ Reference guides are in `GUIDES/`:
 For an application repository, populate `.github/pipeline/build-list.json`.
 The reusable CI workflow validates this file and
 `.github/pipeline/deployment-targets.json` before running project commands.
+When `artifact-path` is provided, CI verifies the tested build output and
+uploads it to GitHub artifact storage. Deployment downloads that package,
+verifies it is non-empty, and exposes it as `ARTIFACT_PATH` to the deploy
+command.
 The caller template currently demonstrates a Node application:
 
 ```json

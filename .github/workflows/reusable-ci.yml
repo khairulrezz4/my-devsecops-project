@@ -29,7 +29,7 @@ permissions:
 
 jobs:
   ci:
-    name: Build
+    name: Build Step
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -51,10 +51,23 @@ jobs:
         shell: bash
         run: ${{ inputs.test-command }}
 
-      - name: Upload build artifact
+      - name: Verify build package
+        if: inputs.artifact-path != ''
+        env:
+          ARTIFACT_PATH: ${{ inputs.artifact-path }}
+        shell: bash
+        run: |
+          if [[ ! -e "$ARTIFACT_PATH" ]]; then
+            echo "::error::Build package does not exist: $ARTIFACT_PATH"
+            exit 1
+          fi
+
+      - name: Upload build package to GitHub artifact storage
         if: inputs.artifact-path != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ inputs.artifact-name }}
           path: ${{ inputs.artifact-path }}
           if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
