@@ -28,4 +28,4 @@ jobs:
       deploy-enabled: false
       deploy-environment: ''
       deploy-command: ''
-      # The build package is produced before deployment and consumed from artifact storage.
+      # POC verification: build, test, upload, then consume the package from artifact storage.
