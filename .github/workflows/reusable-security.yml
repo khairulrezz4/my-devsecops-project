@@ -36,24 +36,24 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Initialize CodeQL
-        if: inputs.codeql-languages != ''
+        if: inputs['codeql-languages'] != ''
         uses: github/codeql-action/init@5c8ea125689a2c5ae2672d1d914ac4bcd95d1b4b # v3
         with:
-          languages: ${{ inputs.codeql-languages }}
-          build-mode: ${{ inputs.codeql-build-mode }}
+          languages: ${{ inputs['codeql-languages'] }}
+          build-mode: ${{ inputs['codeql-build-mode'] }}
 
       - name: Autobuild CodeQL targets
-        if: inputs.codeql-languages != '' && inputs.codeql-build-mode == 'autobuild'
+        if: inputs['codeql-languages'] != '' && inputs['codeql-build-mode'] == 'autobuild'
         uses: github/codeql-action/autobuild@5c8ea125689a2c5ae2672d1d914ac4bcd95d1b4b # v3
 
       - name: Analyze with CodeQL
-        if: inputs.codeql-languages != ''
+        if: inputs['codeql-languages'] != ''
         uses: github/codeql-action/analyze@5c8ea125689a2c5ae2672d1d914ac4bcd95d1b4b # v3
         with:
           output: codeql-results
 
       - name: Upload CodeQL SARIF results
-        if: inputs.codeql-languages != ''
+        if: inputs['codeql-languages'] != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: codeql-sarif
@@ -63,7 +63,7 @@ jobs:
   ghas-report:
     name: Generate GHAS result
     needs: security
-    if: inputs.codeql-languages != ''
+    if: inputs['codeql-languages'] != ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

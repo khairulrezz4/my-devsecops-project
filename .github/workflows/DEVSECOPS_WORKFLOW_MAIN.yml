@@ -78,7 +78,7 @@ concurrency:
 
 jobs:
   initialization:
-    name: Initialize and validate pipeline
+    name: Initialization Step
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -94,7 +94,7 @@ jobs:
         uses: ./.github/actions/initialize-pipeline
 
   branch-policy:
-    name: Enforce branch push policy
+    name: Branch Policy Enforcement
     needs: initialization
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -116,35 +116,35 @@ jobs:
           esac
 
   ci:
-    name: Build
+    name: Build Step
     needs: branch-policy
     uses: ./.github/workflows/reusable-ci.yml
     with:
-      build-command: ${{ inputs.build-command || '' }}
-      test-command: ${{ inputs.test-command || '' }}
-      artifact-path: ${{ inputs.artifact-path || '' }}
-      artifact-name: ${{ inputs.artifact-name || 'build-artifact' }}
+      build-command: ${{ inputs['build-command'] || '' }}
+      test-command: ${{ inputs['test-command'] || '' }}
+      artifact-path: ${{ inputs['artifact-path'] || '' }}
+      artifact-name: ${{ inputs['artifact-name'] || 'build-artifact' }}
 
   security:
-    name: Security scanning
+    name: Security Scanning
     needs: branch-policy
     uses: ./.github/workflows/reusable-security.yml
     with:
       codeql-languages: python
-      codeql-build-mode: ${{ inputs.codeql-build-mode || 'none' }}
+      codeql-build-mode: ${{ inputs['codeql-build-mode'] || 'none' }}
 
   cd:
-    name: Deployment
+    name: Deployment Step
     needs:
       - ci
       - security
     if: >-
       (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call') &&
-      inputs.deploy-enabled == true &&
-      inputs.deploy-environment != '' &&
-      inputs.deploy-command != ''
+      inputs['deploy-enabled'] == true &&
+      inputs['deploy-environment'] != '' &&
+      inputs['deploy-command'] != ''
     uses: ./.github/workflows/reusable-cd.yml
     with:
-      artifact-name: ${{ inputs.artifact-name || 'build-artifact' }}
-      deploy-command: ${{ inputs.deploy-command }}
-      deploy-environment: ${{ inputs.deploy-environment }}
+      artifact-name: ${{ inputs['artifact-name'] || 'build-artifact' }}
+      deploy-command: ${{ inputs['deploy-command'] }}
+      deploy-environment: ${{ inputs['deploy-environment'] }}
