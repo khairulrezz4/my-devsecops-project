@@ -19,7 +19,7 @@ concurrency:
 jobs:
   devsecops:
     name: Run Python POC pipeline
-    uses: khairulrezz4/my-devsecops-project/.github/workflows/DEVSECOPS_WORKFLOW_MAIN.yml@e2399aaa4bae781457bd7f0a4bd38c2a8b58e58d # artifact pipeline test
+    uses: khairulrezz4/my-devsecops-project/.github/workflows/DEVSECOPS_WORKFLOW_MAIN.yml@186b5b018a2a26644f1a5e93911d6b57850dd2dd # artifact pipeline test
     with:
       build-command: 'python POC/python/build.py'
       test-command: 'python -m unittest discover -s POC/python -p "test_*.py"'
