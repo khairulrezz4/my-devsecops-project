@@ -22,7 +22,7 @@ def tracked_files(pattern: str) -> list[Path]:
         capture_output=True,
         text=True,
     )
-    return [Path(line) for line in result.stdout.splitlines() if line]
+    return [path for line in result.stdout.splitlines() if line and (path := Path(line)).exists()]
 
 
 def validate_json() -> None:
